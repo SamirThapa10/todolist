@@ -6,7 +6,7 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <Show />
+        <Show heading= "To do list" placeholder="Enter the task to do "/>
       </header>
     </div>
   );
