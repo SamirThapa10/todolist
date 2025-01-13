@@ -5,7 +5,7 @@ export default function Show(props) {
     //console.log(text)
     //console.log(list)
     if (text !== '') {
-      if (list[0] == 'No task to do') {
+      if (list[0] === 'No task to do') {
         newList([text])
       } else {
         newList([...list, text])
@@ -16,9 +16,29 @@ export default function Show(props) {
   }
   const deleteTask = (index, task) => {
     //console.log("Clicked item" + index + task)
-    const updatedList = list.filter(list => list !== task)
+    const filteredList = list.filter(list => list !== task)
     //console.log(updatedList)
-    newList(updatedList)
+    newList(filteredList)
+  }
+
+  const updateTask = (index, task) => {
+    //console.log(task)
+    setEditedIndex(index)
+    setEditedValue(task)
+  }
+
+  const save = () => {
+    const updatedList = list.map((task,index) =>{
+      if( editedIndex === index){
+        return editedValue;
+      }
+      return task;
+      //console.log(index + task)
+      //console.log(editedValue)
+
+    });
+    newList(updatedList);
+    setEditedIndex(null);
   }
 
   const deleteAll = () => {
@@ -29,6 +49,8 @@ export default function Show(props) {
   }
   const [text, setText] = useState('')
   const [list, newList] = useState(['No task to do'])
+  const [editedValue, setEditedValue] = useState('')
+  const [editedIndex, setEditedIndex] = useState(null)
   return (
     <section>
       <h1>{props.heading}</h1>
@@ -40,17 +62,29 @@ export default function Show(props) {
       <div className='container'>
         <ul>
           {list.map((task, index) => (
-            <li key={index}>{task}
-              {task !== 'No task to do' && (
-                <button onClick={() => { deleteTask(index, task) }}>Delete</button>)
-              }         
+            <li key={index}>
+              {editedIndex === index ? (
+                <>
+                <input type="text" value={editedValue} onChange={(e) => setEditedValue(e.target.value)} />
+                <button onClick={()=>{save(index, task)}}>Save</button>
+                </>
+              ) : (
+                <>
+                  {task}
+                  {task !== 'No task to do' && (
+                    <>
+                      <button onClick={() => { deleteTask(index, task) }}>Delete</button>
+                      <button onClick={() => { updateTask(index, task) }}>Update</button>
+                    </>)}
+                </>
+              )}
             </li>
 
           ))}
         </ul>
-        { list[0] !== 'No task to do' && (
-        <button onClick={deleteAll}>Clear All</button>
-      )}
+        {list[0] !== 'No task to do' && list.length !== 0 && (
+          <button onClick={deleteAll}>Clear All</button>
+        )}
       </div>
 
     </section>
