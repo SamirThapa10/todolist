@@ -1,5 +1,5 @@
 import axios from 'axios'
-import  Axios  from 'axios'
+import Axios from 'axios'
 import React, { useState, useEffect } from 'react'
 
 export default function Show(props) {
@@ -13,23 +13,20 @@ export default function Show(props) {
         newList([...list, text])
       }
       setText('');
-      postData();
     }
-    
+
   }
   const deleteTask = (index, task) => {
     //console.log("Clicked item" + index + task)
     const filteredList = list.filter(list => list !== task)
     //console.log(updatedList)
     newList(filteredList)
-    postData();
   }
 
   const updateTask = (index, task) => {
     //console.log(task)
     setEditedIndex(index)
     setEditedValue(task)
-    postData();
   }
 
   const save = () => {
@@ -44,38 +41,44 @@ export default function Show(props) {
     });
     newList(updatedList);
     setEditedIndex(null);
-    postData();
   }
 
   const deleteAll = () => {
     newList(['No task to do'])
-    postData();
   }
 
   const handleOnChange = (event) => {
     setText(event.target.value)
   }
-  
+
   const [text, setText] = useState('')
   const [list, newList] = useState([])
   const [editedValue, setEditedValue] = useState('')
   const [editedIndex, setEditedIndex] = useState(null)
 
-  const getData = async() =>{
-    const response = await Axios.get("http://localhost:4000/getData");
-    newList([response.data]);
-  }
+
 
   useEffect(() => {
+    const getData = async () => {
+      const response = await Axios.get("http://localhost:4000/getData");
+      newList([response.data]);
+    };
     getData();
   }, []);
 
-  const postData = async() =>{
-    const data = {
-      list: list,
+  
+
+  useEffect(() => {
+    if (list.length > 0) { 
+      const postData = async () => {
+        const data = {
+          value :list
+        }
+        await Axios.post("http://localhost:4000/Data", data);
+      };
+      postData();
     }
-    await Axios.post("http://localhost:4000/Data", data)
-  }
+  }, [list]);
 
   return (
     <section>
