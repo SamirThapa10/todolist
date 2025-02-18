@@ -43,8 +43,10 @@ export default function Show(props) {
     setEditedIndex(null);
   }
 
-  const deleteAll = () => {
+  const deleteAll = async() => {
+    await Axios.delete("http://localhost:4000/api")
     newList(['No task to do'])
+    console.log(list)
   }
 
   const handleOnChange = (event) => {
@@ -60,21 +62,25 @@ export default function Show(props) {
 
   useEffect(() => {
     const getData = async () => {
-      const response = await Axios.get("http://localhost:4000/getData");
-      newList([response.data]);
+      const response = await Axios.get("http://localhost:4000/api");
+      for (let i = 0; i < response.data.length; i++) {
+        //console.log(response.data[i].value)
+        newList([response.data[i].value]);
+      }
     };
     getData();
   }, []);
 
-  
+
 
   useEffect(() => {
-    if (list.length > 0) { 
+    if (list.length > 0) {
       const postData = async () => {
         const data = {
-          value :list
+          user: 1,
+          value: list
         }
-        await Axios.post("http://localhost:4000/Data", data);
+        await Axios.post("http://localhost:4000/api", data);
       };
       postData();
     }
