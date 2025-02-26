@@ -16,11 +16,13 @@ export default function Show(props) {
     }
 
   }
-  const deleteTask = (index, task) => {
-    //console.log("Clicked item" + index + task)
-    const filteredList = list.filter(list => list !== task)
-    //console.log(updatedList)
-    newList(filteredList)
+  const deleteTask = async(index, task) => {
+    const response = await Axios.delete("http://localhost:4000/api",{
+      data:{index,task}
+    })  
+    console.log(response.data.message)
+    console.log(response.data.data)
+    newList(response.data.data)
   }
 
   const updateTask = (index, task) => {
@@ -44,9 +46,10 @@ export default function Show(props) {
   }
 
   const deleteAll = async() => {
-    await Axios.delete("http://localhost:4000/api")
-    newList(['No task to do'])
-    console.log(list)
+    const response = await Axios.delete("http://localhost:4000/api");
+    console.log(response.data.message)
+    console.log(response.data.data)
+    newList(response.data.data)
   }
 
   const handleOnChange = (event) => {
@@ -63,10 +66,7 @@ export default function Show(props) {
   useEffect(() => {
     const getData = async () => {
       const response = await Axios.get("http://localhost:4000/api");
-      for (let i = 0; i < response.data.length; i++) {
-        //console.log(response.data[i].value)
-        newList([response.data[i].value]);
-      }
+      newList(response.data)
     };
     getData();
   }, []);
@@ -76,11 +76,7 @@ export default function Show(props) {
   useEffect(() => {
     if (list.length > 0) {
       const postData = async () => {
-        const data = {
-          user: 1,
-          value: list
-        }
-        await Axios.post("http://localhost:4000/api", data);
+        await Axios.post("http://localhost:4000/api", {list});
       };
       postData();
     }
